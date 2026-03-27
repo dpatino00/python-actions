@@ -19,6 +19,9 @@ on:
         type: string
         default: "--all-files"
 
+permissions:
+  contents: read
+
 jobs:
   quality:
     name: Lint & Pre-commit
@@ -29,20 +32,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
-      - name: Set up Python ${{ inputs.python-version }}
-        uses: actions/setup-python@v6
+      - name: Setup Python + uv
+        uses: ./.github/actions/setup-python-uv
         with:
           python-version: ${{ inputs.python-version }}
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
-      - name: Install dependencies
-        run: uv sync --dev
 
       - name: Run pre-commit
         run: |
