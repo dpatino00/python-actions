@@ -55,12 +55,61 @@ jobs:
       ruff-args: "--select E,F,I"
 ```
 
+### `python-tests.yml` - Tests
+
+Runs **pytest** against your codebase.
+
+**Requirements for consumer repos:**
+- A `pyproject.toml` with uv-compatible project config
+- A `uv.lock` lockfile (run `uv sync` locally)
+- `pytest` in your dev dependencies
+- A `tests/` directory (or pytest-discoverable test files)
+
+#### Inputs
+
+| Input               | Required | Default | Description                      |
+| ------------------- | -------- | ------- | -------------------------------- |
+| `python-version`    | No       | `3.12`  | Python version to use            |
+| `working-directory` | No       | `.`     | Working directory for all steps  |
+| `pytest-args`       | No       | `""`    | Additional arguments for pytest  |
+
+#### Usage
+
+```yaml
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    uses: dpatino00/python-actions/.github/workflows/python-tests.yml@v1
+    with:
+      python-version: "3.12"
+```
+
+#### With custom options
+
+```yaml
+jobs:
+  tests:
+    uses: dpatino00/python-actions/.github/workflows/python-tests.yml@v1
+    with:
+      pytest-args: "-v --tb=short"
+      working-directory: "backend"
+```
+
+---
+
 ## Adding to Your Project
 
 1. Ensure your project uses `uv` with dev dependencies:
 
    ```bash
-   uv add --dev ruff pre-commit
+   uv add --dev ruff pre-commit pytest
    uv sync --dev
    ```
 

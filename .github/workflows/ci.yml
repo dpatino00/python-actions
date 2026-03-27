@@ -11,3 +11,8 @@ jobs:
     uses: ./.github/workflows/python-quality.yml
     with:
       python-version: "3.12"
+
+  tests:
+    uses: ./.github/workflows/python-tests.yml
+    with:
+      python-version: "3.12"
