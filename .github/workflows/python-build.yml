@@ -1,0 +1,68 @@
+name: Python Build
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: "Python version to use"
+        required: false
+        type: string
+        default: "3.12"
+      working-directory:
+        description: "Working directory for all steps"
+        required: false
+        type: string
+        default: "."
+      verify-install:
+        description: "Install the built wheel and run an import smoke test"
+        required: false
+        type: boolean
+        default: true
+      import-name:
+        description: "Python import name to verify (e.g. 'my_package'). Skipped if empty."
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Build package
+        run: uv build
+
+      - name: Verify wheel installs cleanly
+        if: inputs.verify-install
+        run: |
+          uv venv /tmp/install-test
+          VIRTUAL_ENV=/tmp/install-test uv pip install dist/*.whl
+
+      - name: Smoke test import
+        if: inputs.verify-install && inputs.import-name != ''
+        run: |
+          /tmp/install-test/bin/python -c "import ${{ inputs.import-name }}; print('Import OK')"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ${{ inputs.working-directory }}/dist/
+          retention-days: 5

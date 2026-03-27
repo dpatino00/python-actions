@@ -103,6 +103,50 @@ jobs:
 
 ---
 
+### `python-build.yml` - Build & Verify
+
+Builds your package (sdist + wheel), optionally installs the wheel in a clean environment, and uploads build artifacts.
+
+**Requirements for consumer repos:**
+- A `pyproject.toml` with uv-compatible project config and build metadata
+
+#### Inputs
+
+| Input               | Required | Default | Description                                                  |
+| ------------------- | -------- | ------- | ------------------------------------------------------------ |
+| `python-version`    | No       | `3.12`  | Python version to use                                        |
+| `working-directory` | No       | `.`     | Working directory for all steps                              |
+| `verify-install`    | No       | `true`  | Install the built wheel in a clean env to verify it works    |
+| `import-name`       | No       | `""`    | Python import name to smoke test (e.g. `my_package`)         |
+
+#### Usage
+
+```yaml
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    uses: dpatino00/python-actions/.github/workflows/python-build.yml@v1
+```
+
+#### With import verification
+
+```yaml
+jobs:
+  build:
+    uses: dpatino00/python-actions/.github/workflows/python-build.yml@v1
+    with:
+      import-name: "my_package"
+```
+
+---
+
 ## Adding to Your Project
 
 1. Ensure your project uses `uv` with dev dependencies:

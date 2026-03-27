@@ -14,3 +14,8 @@ jobs:
 
   tests:
     uses: ./.github/workflows/python-tests.yml
+
+  build:
+    uses: ./.github/workflows/python-build.yml
+    with:
+      verify-install: true
