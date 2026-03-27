@@ -55,7 +55,7 @@ jobs:
 
 ### `python-tests.yml` - Tests
 
-Runs **pytest** against your codebase.
+Runs **pytest** against your codebase with a **matrix** of Python versions.
 
 **Requirements for consumer repos:**
 - A `pyproject.toml` with uv-compatible project config
@@ -65,13 +65,15 @@ Runs **pytest** against your codebase.
 
 #### Inputs
 
-| Input               | Required | Default | Description                      |
-| ------------------- | -------- | ------- | -------------------------------- |
-| `python-version`    | No       | `3.12`  | Python version to use            |
-| `working-directory` | No       | `.`     | Working directory for all steps  |
-| `pytest-args`       | No       | `""`    | Additional arguments for pytest  |
+| Input               | Required | Default                          | Description                              |
+| ------------------- | -------- | -------------------------------- | ---------------------------------------- |
+| `python-versions`   | No       | `["3.11","3.12","3.13","3.14"]`  | JSON array of Python versions to test    |
+| `working-directory` | No       | `.`                              | Working directory for all steps          |
+| `pytest-args`       | No       | `""`                             | Additional arguments for pytest          |
 
 #### Usage
+
+Uses the default matrix (3.11, 3.12, 3.13, 3.14):
 
 ```yaml
 name: Tests
@@ -85,17 +87,16 @@ on:
 jobs:
   tests:
     uses: dpatino00/python-actions/.github/workflows/python-tests.yml@v1
-    with:
-      python-version: "3.12"
 ```
 
-#### With custom options
+#### With custom versions
 
 ```yaml
 jobs:
   tests:
     uses: dpatino00/python-actions/.github/workflows/python-tests.yml@v1
     with:
+      python-versions: '["3.12","3.13"]'
       pytest-args: "-v --tb=short"
       working-directory: "backend"
 ```

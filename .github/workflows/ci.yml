@@ -14,5 +14,3 @@ jobs:
 
   tests:
     uses: ./.github/workflows/python-tests.yml
-    with:
-      python-version: "3.12"
