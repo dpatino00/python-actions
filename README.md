@@ -6,13 +6,13 @@ Reusable GitHub Actions workflows for Python projects using [uv](https://docs.as
 
 ### `python-quality.yml` - Lint & Pre-commit
 
-Runs **ruff check**, **ruff format --check**, and **pre-commit** against your codebase.
+Runs **pre-commit** hooks (including ruff lint and format checks) against your codebase.
 
 **Requirements for consumer repos:**
 - A `pyproject.toml` with uv-compatible project config
 - A `uv.lock` lockfile (run `uv sync` locally)
-- A `.pre-commit-config.yaml`
-- `ruff` and `pre-commit` in your dev dependencies
+- A `.pre-commit-config.yaml` (with ruff hooks for lint/format)
+- `pre-commit` in your dev dependencies
 
 #### Inputs
 
@@ -20,7 +20,6 @@ Runs **ruff check**, **ruff format --check**, and **pre-commit** against your co
 | ------------------- | -------- | ------------- | -------------------------------------- |
 | `python-version`    | No       | `3.12`        | Python version to use                  |
 | `working-directory` | No       | `.`           | Working directory for all steps        |
-| `ruff-args`         | No       | `""`          | Additional arguments for `ruff check`  |
 | `pre-commit-args`   | No       | `--all-files` | Additional arguments for `pre-commit`  |
 
 #### Usage
@@ -52,7 +51,6 @@ jobs:
     with:
       python-version: "3.11"
       working-directory: "backend"
-      ruff-args: "--select E,F,I"
 ```
 
 ### `python-tests.yml` - Tests
