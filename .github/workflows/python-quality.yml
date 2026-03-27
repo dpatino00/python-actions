@@ -1,0 +1,60 @@
+name: Python Quality
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: "Python version to use"
+        required: false
+        type: string
+        default: "3.12"
+      working-directory:
+        description: "Working directory for all steps"
+        required: false
+        type: string
+        default: "."
+      ruff-args:
+        description: "Additional arguments for ruff check"
+        required: false
+        type: string
+        default: ""
+      pre-commit-args:
+        description: "Additional arguments for pre-commit run"
+        required: false
+        type: string
+        default: "--all-files"
+
+jobs:
+  quality:
+    name: Lint & Pre-commit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Run ruff check
+        run: uv run ruff check . ${{ inputs.ruff-args }}
+
+      - name: Run ruff format check
+        run: uv run ruff format --check .
+
+      - name: Run pre-commit
+        run: |
+          uv run pre-commit run ${{ inputs.pre-commit-args }}
